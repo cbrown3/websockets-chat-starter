@@ -10,6 +10,69 @@
          online at your node.js address under /socket.io/socket.io.js 
          You can disable that on the server if desired
     -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/babel">
+
+        const connectSocket = (e) => {
+            const message = document.querySelector("#message");
+            const chat = document.querySelector("#chat");
+            const socket = io.connect();
+            
+            socket.on('connect', () => {
+                console.log('connecting');
+                
+                let user = document.querySelector("#username").value;
+                
+                if(!user) {
+                    user = 'unknown';
+                }
+                
+                socket.emit('join', {name: user});
+            });
+            
+            socket.on('msg', (data) => {
+                console.log(data);
+                
+                let message = document.querySelector("#message").value;
+                
+                if(!message) {
+                    message = '';
+                }
+                
+                socket.emit('msgToServer', {msg: message});
+            });
+        };
+
+        const sendMessage = (e) => {
+            const message = document.querySelector("#message");
+            const chat = document.querySelector("#chat");
+            const socket = io.connect();
+            
+            socket.on('msg', (data) => {
+                console.log(data);
+                
+                let message = document.querySelector("#message").value;
+                let chat = document.querySelector("#chat").value;
+                if(!message) {
+                    message = '';
+                }
+                
+                chat = message;
+                
+                socket.emit('msgToServer', {msg: message});
+            });
+        };
+
+        const init = () => {
+            const connect = document.querySelector("#connect");
+            const send = document.querySelector("#send");
+            connect.addEventListener('click', connectSocket);
+            send.addEventListener('click', sendMessage);
+        };
+
+        window.onload = init;
+
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
 	<style>
 		textarea {
