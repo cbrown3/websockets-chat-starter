@@ -1,0 +1,27 @@
+{
+  "name": "websockets-chat",
+  "version": "1.0.0",
+  "description": "Websocket Chat Server",
+  "main": "./src/server.js",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "pretest": "eslint ./src --fix",
+    "test": "echo \"Tests complete\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cbrown3/websockets-chat-starter.git"
+  },
+  "author": "Chris Brown",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cbrown3/websockets-chat-starter/issues"
+  },
+  "homepage": "https://github.com/cbrown3/websockets-chat-starter#readme",
+  "devDependencies": {
+    "eslint": "^4.7.1",
+    "eslint-config-airbnb": "^15.1.0",
+    "eslint-plugin-import": "^2.7.0",
+    "socket.io": "^2.0.3"
+  }
+}
