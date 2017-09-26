@@ -48,7 +48,15 @@ const onJoined = (sock) => {
         //success message back to new user
         socket.emit('msg', {name: 'server', msg: 'You joined the room'});
         
-        users.push(data.name);
+        users.push(sock); 
+        
+        //message of update to how many users there are
+        const joinMsg2 = {
+            name: 'server',
+            msg: `There are ${Object.keys(users).length} users online`,
+        };
+        socket.broadcast.to('room1').emit('msg', joinMsg2);
+        
     });
 };
 
@@ -63,6 +71,16 @@ const onMsg = (sock) => {
 
 const onDisconnect = (sock) => {
     const socket = sock;
+    
+    const leaveMsg = {
+        name: 'server',
+        msg: `${sock.name} has left the room.`,
+    };
+    
+    socket.broadcast.to('room1').emit('msg', leaveMsg);
+    
+    socket.leave('room1');
+    
 };
 
 io.sockets.on('connection', (socket) => {
@@ -70,6 +88,11 @@ io.sockets.on('connection', (socket) => {
     
     onJoined(socket);
     onMsg(socket);
+});
+
+io.sockets.on('disconnect', (socket) => {
+    console.log('disconnect');
+    
     onDisconnect(socket);
 });
 
