@@ -55,6 +55,7 @@ const onJoined = (sock) => {
             name: 'server',
             msg: `There are ${Object.keys(users).length} users online`,
         };
+        
         socket.broadcast.to('room1').emit('msg', joinMsg2);
         
     });
@@ -64,23 +65,33 @@ const onMsg = (sock) => {
     const socket = sock;
     
     socket.on('msgToServer', (data) => {
-        
+        console.dir(data);
         io.sockets.in('room1').emit('msg', { name: socket.name, msg: data.msg });
+        
+        if(data.msg.includes('change username to ')){
+            socket.name = data.msg.substr(19);
+        }
+        
     });
 };
 
 const onDisconnect = (sock) => {
-    const socket = sock;
+     sock.on('disconnect', () => {
     
-    const leaveMsg = {
-        name: 'server',
-        msg: `${sock.name} has left the room.`,
-    };
-    
-    socket.broadcast.to('room1').emit('msg', leaveMsg);
-    
-    socket.leave('room1');
-    
+        const leaveMsg = {
+            name: 'server',
+            msg: `${sock.name} has left the room.`,
+        };
+
+        sock.broadcast.to('room1').emit('msg', leaveMsg);
+
+        sock.leave('room1');
+        
+        const userIndex = users.indexOf(sock.name);
+         
+        users.splice(userIndex, 1);
+         
+        });
 };
 
 io.sockets.on('connection', (socket) => {
@@ -88,12 +99,8 @@ io.sockets.on('connection', (socket) => {
     
     onJoined(socket);
     onMsg(socket);
-});
-
-io.sockets.on('disconnect', (socket) => {
-    console.log('disconnect');
-    
     onDisconnect(socket);
+
 });
 
 console.log('Websocket server started');

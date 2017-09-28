@@ -12,11 +12,13 @@
     -->
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/babel">
+        
+        let socket;
 
         const connectSocket = (e) => {
             const message = document.querySelector("#message");
             const chat = document.querySelector("#chat");
-            const socket = io.connect();
+            socket = io.connect();
             
             socket.on('connect', () => {
                 console.log('connecting');
@@ -32,27 +34,31 @@
             
             socket.on('msg', (data) => {
                 console.log(data);
+                
+                let chat = document.querySelector("#chat");
+                let chatValue = chat.value;
+                
+                if(data.msg == 'roll'){
+                    const roll = Math.floor((Math.random() * 5) + 1);
+                    chat.value += `\n${data.name} rolled a 6-sided die and got ${roll}`;
+                }
+                else if(data.msg == 'super smash brothers'){
+                        chat.value += `\nMELEEEEEEEEEEEEEEEEEEEEEEE!`;
+                }
+                else if(data.msg.includes('change username to ')){
+                        chat.value += `\n${data.name} changed their username to ${data.msg.substr(19)}`;
+                }
+                else {
+                    chat.value += `\n${data.name}: ${data.msg}`;
+                }
+                
             });
         };
 
         const sendMessage = (e) => {
             const message = document.querySelector("#message");
-            const chat = document.querySelector("#chat");
-            const socket = io.connect();
             
-            socket.on('msg', (data) => {
-                console.log(data);
-                
-                let message = document.querySelector("#message").value;
-                let chat = document.querySelector("#chat").value;
-                if(!message) {
-                    message = '';
-                }
-                
-                chat = message;
-                
-                socket.emit('msgToServer', {msg: message});
-            });
+            socket.emit('msgToServer', {msg: message.value});
         };
 
         const init = () => {
